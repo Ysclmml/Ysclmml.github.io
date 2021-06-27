@@ -1,0 +1,422 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>application_初始化阅读 | 博客</title><meta name="keywords" content="异步,python"><meta name="author" content="yscl"><meta name="copyright" content="yscl"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这里开始从HelloWorld的demo开始阅读源码。 app &#x3D; tornado.web.Application([         (r&#39;&#x2F;&#39;, MainHandler),     ]) app.listen(8888) tornado.ioloop.IOLoop.current().start()  上面三行代码是先从实例化一个webApp开始的， 那么接下来开始看这个Application">
+<meta property="og:type" content="article">
+<meta property="og:title" content="application_初始化阅读">
+<meta property="og:url" content="http://blog.yscl.top/2021/03/25/yuan-ma-yue-du/3-application-chu-shi-hua-yue-du/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="这里开始从HelloWorld的demo开始阅读源码。 app &#x3D; tornado.web.Application([         (r&#39;&#x2F;&#39;, MainHandler),     ]) app.listen(8888) tornado.ioloop.IOLoop.current().start()  上面三行代码是先从实例化一个webApp开始的， 那么接下来开始看这个Application">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2021-03-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-21T07:34:41.571Z">
+<meta property="article:author" content="yscl">
+<meta property="article:tag" content="异步">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://blog.yscl.top/2021/03/25/yuan-ma-yue-du/3-application-chu-shi-hua-yue-du/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"prismjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'application_初始化阅读',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-06-21 15:34:41'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const fontSizeVal = saveToLocal.get('global-font-size')
+    if (fontSizeVal !== undefined) {
+      document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+    }
+    })(window)</script><link rel="stylesheet" href="/css/custom/custom.css"  media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/l-lin/font-awesome-animation/dist/font-awesome-animation.min.css"  media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-butterfly-clock/lib/clock.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.1.6/css/swiper.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-butterfly-swiper/lib/swiperstyle.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">application_初始化阅读</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-03-24T16:00:00.000Z" title="发表于 2021-03-25 00:00:00">2021-03-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-06-21T07:34:41.571Z" title="更新于 2021-06-21 15:34:41">2021-06-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/tornado/">tornado</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="application_初始化阅读"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>这里开始从<code>HelloWorld</code>的demo开始阅读源码。</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">app <span class="token operator">=</span> tornado<span class="token punctuation">.</span>web<span class="token punctuation">.</span>Application<span class="token punctuation">(</span><span class="token punctuation">[</span>
+        <span class="token punctuation">(</span><span class="token string">r'/'</span><span class="token punctuation">,</span> MainHandler<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span><span class="token punctuation">)</span>
+app<span class="token punctuation">.</span>listen<span class="token punctuation">(</span><span class="token number">8888</span><span class="token punctuation">)</span>
+tornado<span class="token punctuation">.</span>ioloop<span class="token punctuation">.</span>IOLoop<span class="token punctuation">.</span>current<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面三行代码是先从实例化一个<code>webApp</code>开始的， 那么接下来开始看这个Application的源码</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">Application</span><span class="token punctuation">(</span>ReversibleRouter<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">r"""A collection of request handlers that make up a web application.
+
+    Instances of this class are callable and can be passed directly to
+    HTTPServer to serve the application::
+
+        application = web.Application([
+            (r"/", MainPageHandler),
+        ])
+        http_server = httpserver.HTTPServer(application)
+        http_server.listen(8080)
+        ioloop.IOLoop.current().start()
+    """</span>
+        <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>
+        self<span class="token punctuation">,</span>
+        handlers<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span>_RuleList<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+        default_host<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+        transforms<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span>List<span class="token punctuation">[</span>Type<span class="token punctuation">[</span><span class="token string">"OutputTransform"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+        <span class="token operator">**</span>settings<span class="token punctuation">:</span> Any
+    <span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        <span class="token triple-quoted-string string">"""
+        :param handlers: 处理业务逻辑的包含路由设置的handlers
+        :param default_host: 默认的启动后的host
+        :param transforms: 设置响应结果传输的方式
+        :param settings:  application的配置
+        """</span>
+        <span class="token comment"># 设置了transforms参数会在响应头中添加Content-Encoding='gzip'</span>
+        <span class="token keyword">if</span> transforms <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>transforms <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>  <span class="token comment"># type: List[Type[OutputTransform]]</span>
+            <span class="token comment"># 如果需要压缩响应结果， 需要在结果中设置compress_response或gzip参数为True</span>
+            <span class="token keyword">if</span> settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"compress_response"</span><span class="token punctuation">)</span> <span class="token keyword">or</span> settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"gzip"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+                self<span class="token punctuation">.</span>transforms<span class="token punctuation">.</span>append<span class="token punctuation">(</span>GZipContentEncoding<span class="token punctuation">)</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>transforms <span class="token operator">=</span> transforms
+        <span class="token comment"># 默认host</span>
+        self<span class="token punctuation">.</span>default_host <span class="token operator">=</span> default_host
+        <span class="token comment"># 加载所有初始化后传入的settings</span>
+        self<span class="token punctuation">.</span>settings <span class="token operator">=</span> settings
+        <span class="token comment"># 模板相关的配置</span>
+        self<span class="token punctuation">.</span>ui_modules <span class="token operator">=</span> <span class="token punctuation">{</span>
+            <span class="token string">"linkify"</span><span class="token punctuation">:</span> _linkify<span class="token punctuation">,</span>
+            <span class="token string">"xsrf_form_html"</span><span class="token punctuation">:</span> _xsrf_form_html<span class="token punctuation">,</span>
+            <span class="token string">"Template"</span><span class="token punctuation">:</span> TemplateModule<span class="token punctuation">,</span>
+        <span class="token punctuation">}</span>
+        self<span class="token punctuation">.</span>ui_methods <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>  <span class="token comment"># type: Dict[str, Callable[..., str]]</span>
+        <span class="token comment"># 获取自定义的UIModule和UIMethods</span>
+        self<span class="token punctuation">.</span>_load_ui_modules<span class="token punctuation">(</span>settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"ui_modules"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>_load_ui_methods<span class="token punctuation">(</span>settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"ui_methods"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token comment"># 检查settings有没有配置静态资源的路径</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"static_path"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            path <span class="token operator">=</span> self<span class="token punctuation">.</span>settings<span class="token punctuation">[</span><span class="token string">"static_path"</span><span class="token punctuation">]</span>
+            handlers <span class="token operator">=</span> <span class="token builtin">list</span><span class="token punctuation">(</span>handlers <span class="token keyword">or</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+            <span class="token comment"># 默认的静态资源路径为/static/资源的地址</span>
+            static_url_prefix <span class="token operator">=</span> settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"static_url_prefix"</span><span class="token punctuation">,</span> <span class="token string">"/static/"</span><span class="token punctuation">)</span>
+            <span class="token comment"># 静态资源的处理Handler， 可以自己传，也可以使用默认的Handler</span>
+            static_handler_class <span class="token operator">=</span> settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span>
+                <span class="token string">"static_handler_class"</span><span class="token punctuation">,</span> StaticFileHandler
+            <span class="token punctuation">)</span>
+            <span class="token comment"># static_handler_args参数是传递给文件处理Handler执行initialize函数初始化的参数</span>
+            static_handler_args <span class="token operator">=</span> settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"static_handler_args"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+            static_handler_args<span class="token punctuation">[</span><span class="token string">"path"</span><span class="token punctuation">]</span> <span class="token operator">=</span> path
+            <span class="token comment"># 默认会添加3条静态资源相关的路由地址</span>
+            <span class="token keyword">for</span> pattern <span class="token keyword">in</span> <span class="token punctuation">[</span>
+                re<span class="token punctuation">.</span>escape<span class="token punctuation">(</span>static_url_prefix<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">r"(.*)"</span><span class="token punctuation">,</span>
+                <span class="token string">r"/(favicon\.ico)"</span><span class="token punctuation">,</span>
+                <span class="token string">r"/(robots\.txt)"</span><span class="token punctuation">,</span>
+            <span class="token punctuation">]</span><span class="token punctuation">:</span>
+                handlers<span class="token punctuation">.</span>insert<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> static_handler_class<span class="token punctuation">,</span> static_handler_args<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token comment"># 检查是否配置是debug模式</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"debug"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            <span class="token comment"># 自动重载</span>
+            self<span class="token punctuation">.</span>settings<span class="token punctuation">.</span>setdefault<span class="token punctuation">(</span><span class="token string">"autoreload"</span><span class="token punctuation">,</span> <span class="token boolean">True</span><span class="token punctuation">)</span>
+            <span class="token comment"># 取消编译模板缓存</span>
+            self<span class="token punctuation">.</span>settings<span class="token punctuation">.</span>setdefault<span class="token punctuation">(</span><span class="token string">"compiled_template_cache"</span><span class="token punctuation">,</span> <span class="token boolean">False</span><span class="token punctuation">)</span>
+            <span class="token comment"># 取消静态文件的hash值缓存</span>
+            self<span class="token punctuation">.</span>settings<span class="token punctuation">.</span>setdefault<span class="token punctuation">(</span><span class="token string">"static_hash_cache"</span><span class="token punctuation">,</span> <span class="token boolean">False</span><span class="token punctuation">)</span>
+            <span class="token comment"># 提供处理跟踪信息</span>
+            self<span class="token punctuation">.</span>settings<span class="token punctuation">.</span>setdefault<span class="token punctuation">(</span><span class="token string">"serve_traceback"</span><span class="token punctuation">,</span> <span class="token boolean">True</span><span class="token punctuation">)</span>
+
+        <span class="token comment"># 添加路由， 这个也是这个app最重要的一个部分</span>
+        self<span class="token punctuation">.</span>wildcard_router <span class="token operator">=</span> _ApplicationRouter<span class="token punctuation">(</span>self<span class="token punctuation">,</span> handlers<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>default_router <span class="token operator">=</span> _ApplicationRouter<span class="token punctuation">(</span>
+            self<span class="token punctuation">,</span> <span class="token punctuation">[</span>Rule<span class="token punctuation">(</span>AnyMatches<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> self<span class="token punctuation">.</span>wildcard_router<span class="token punctuation">)</span><span class="token punctuation">]</span>
+        <span class="token punctuation">)</span>
+        <span class="token comment"># 自动重载</span>
+        <span class="token comment"># Automatically reload modified modules</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>settings<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">"autoreload"</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            <span class="token keyword">from</span> tornado <span class="token keyword">import</span> autoreload
+
+            autoreload<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>跟踪上面的<code>_ApplicationRouter</code>类代码</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">_ApplicationRouter</span><span class="token punctuation">(</span>ReversibleRuleRouter<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""Routing implementation used internally by `Application`.
+	这是一个用来绑定应用程序和RequestHandler的类， 通过路由建立桥梁。
+    """</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>
+        self<span class="token punctuation">,</span> application<span class="token punctuation">:</span> <span class="token string">"Application"</span><span class="token punctuation">,</span> rules<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span>_RuleList<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span>
+    <span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        <span class="token keyword">assert</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>application<span class="token punctuation">,</span> Application<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>application <span class="token operator">=</span> application
+        <span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>rules<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面这个类继承自<code>ReversibleRuleRouter</code>， 继续跟踪代码往下。</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">ReversibleRuleRouter</span><span class="token punctuation">(</span>ReversibleRouter<span class="token punctuation">,</span> RuleRouter<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""A rule-based router that implements ``reverse_url`` method.
+	这个类实现了反向解析类reverse_url方法， 这个功能一般是在模板里面使用的，能够根据名字反向解析出url
+    """</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> rules<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span>_RuleList<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>named_rules <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>  <span class="token comment"># type: Dict[str, Any]</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>rules<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">process_rule</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> rule<span class="token punctuation">:</span> <span class="token string">"Rule"</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token string">"Rule"</span><span class="token punctuation">:</span>
+        rule <span class="token operator">=</span> <span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>process_rule<span class="token punctuation">(</span>rule<span class="token punctuation">)</span>
+
+        <span class="token keyword">if</span> rule<span class="token punctuation">.</span>name<span class="token punctuation">:</span>
+            <span class="token keyword">if</span> rule<span class="token punctuation">.</span>name <span class="token keyword">in</span> self<span class="token punctuation">.</span>named_rules<span class="token punctuation">:</span>
+                app_log<span class="token punctuation">.</span>warning<span class="token punctuation">(</span>
+                    <span class="token string">"Multiple handlers named %s; replacing previous value"</span><span class="token punctuation">,</span> rule<span class="token punctuation">.</span>name
+                <span class="token punctuation">)</span>
+            <span class="token comment"># 将路由的名字与对应的rule规则映射起来。    </span>
+            self<span class="token punctuation">.</span>named_rules<span class="token punctuation">[</span>rule<span class="token punctuation">.</span>name<span class="token punctuation">]</span> <span class="token operator">=</span> rule
+
+        <span class="token keyword">return</span> rule
+
+    <span class="token keyword">def</span> <span class="token function">reverse_url</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">,</span> <span class="token operator">*</span>args<span class="token punctuation">:</span> Any<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span><span class="token punctuation">:</span>
+        <span class="token triple-quoted-string string">"""反向解析功能的实现（根据名字来获取映射的url）"""</span>
+        <span class="token keyword">if</span> name <span class="token keyword">in</span> self<span class="token punctuation">.</span>named_rules<span class="token punctuation">:</span>
+            <span class="token keyword">return</span> self<span class="token punctuation">.</span>named_rules<span class="token punctuation">[</span>name<span class="token punctuation">]</span><span class="token punctuation">.</span>matcher<span class="token punctuation">.</span>reverse<span class="token punctuation">(</span><span class="token operator">*</span>args<span class="token punctuation">)</span>
+
+        <span class="token keyword">for</span> rule <span class="token keyword">in</span> self<span class="token punctuation">.</span>rules<span class="token punctuation">:</span>
+            <span class="token keyword">if</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>rule<span class="token punctuation">.</span>target<span class="token punctuation">,</span> ReversibleRouter<span class="token punctuation">)</span><span class="token punctuation">:</span>
+                reversed_url <span class="token operator">=</span> rule<span class="token punctuation">.</span>target<span class="token punctuation">.</span>reverse_url<span class="token punctuation">(</span>name<span class="token punctuation">,</span> <span class="token operator">*</span>args<span class="token punctuation">)</span>
+                <span class="token keyword">if</span> reversed_url <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+                    <span class="token keyword">return</span> reversed_url
+
+        <span class="token keyword">return</span> <span class="token boolean">None</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>看到这里上面的这个类还是还是没有真正的添加路由规则， 它还继承了另一个核心类<code>RuleRouter</code>， 继续跟踪下去。 </p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">RuleRouter</span><span class="token punctuation">(</span>Router<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""Rule-based router implementation."""</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> rules<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span>_RuleList<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        <span class="token triple-quoted-string string">"""Constructs a router from an ordered list of rules::
+
+            RuleRouter([
+                Rule(PathMatches("/handler"), Target),
+                # ... more rules
+            ])
+
+        You can also omit explicit `Rule` constructor and use tuples of arguments::
+
+            RuleRouter([
+                (PathMatches("/handler"), Target),
+            ])
+
+        `PathMatches` is a default matcher, so the example above can be simplified::
+
+            RuleRouter([
+                ("/handler", Target),
+            ])
+
+        In the examples above, ``Target`` can be a nested `Router` instance, an instance of
+        `~.httputil.HTTPServerConnectionDelegate` or an old-style callable,
+        accepting a request argument.
+
+        :arg rules: a list of `Rule` instances or tuples of `Rule`
+            constructor arguments.
+        """</span>
+        self<span class="token punctuation">.</span>rules <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>  <span class="token comment"># type: List[Rule]</span>
+        <span class="token keyword">if</span> rules<span class="token punctuation">:</span>
+            <span class="token comment"># 这里是真正的添加规则</span>
+            self<span class="token punctuation">.</span>add_rules<span class="token punctuation">(</span>rules<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">add_rules</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> rules<span class="token punctuation">:</span> _RuleList<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        <span class="token triple-quoted-string string">"""Appends new rules to the router.
+
+        :arg rules: a list of Rule instances (or tuples of arguments, which are
+            passed to Rule constructor).
+        """</span>
+        <span class="token keyword">for</span> rule <span class="token keyword">in</span> rules<span class="token punctuation">:</span>
+            <span class="token keyword">if</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>rule<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token builtin">tuple</span><span class="token punctuation">,</span> <span class="token builtin">list</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+                <span class="token keyword">assert</span> <span class="token builtin">len</span><span class="token punctuation">(</span>rule<span class="token punctuation">)</span> <span class="token keyword">in</span> <span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span>
+                <span class="token keyword">if</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>rule<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> basestring_type<span class="token punctuation">)</span><span class="token punctuation">:</span>
+                    rule <span class="token operator">=</span> Rule<span class="token punctuation">(</span>PathMatches<span class="token punctuation">(</span>rule<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">*</span>rule<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+                <span class="token keyword">else</span><span class="token punctuation">:</span>
+                    rule <span class="token operator">=</span> Rule<span class="token punctuation">(</span><span class="token operator">*</span>rule<span class="token punctuation">)</span>
+
+            self<span class="token punctuation">.</span>rules<span class="token punctuation">.</span>append<span class="token punctuation">(</span>self<span class="token punctuation">.</span>process_rule<span class="token punctuation">(</span>rule<span class="token punctuation">)</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>看到这里其实已经豁然开朗了， 最终会把规则放入<code>_ApplicationRouter</code>对象的<code>rules</code>属性中， 就是app的<code>wildcard_router</code>属性中可以直接获取到。 </p>
+<p>接下来可以看看Rule对象的具体结构， 这个Rule对象保存了路由规则以及target处理的映射关系。</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">class</span> <span class="token class-name">Rule</span><span class="token punctuation">(</span><span class="token builtin">object</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""A routing rule."""</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>
+        self<span class="token punctuation">,</span>
+        matcher<span class="token punctuation">:</span> <span class="token string">"Matcher"</span><span class="token punctuation">,</span>
+        target<span class="token punctuation">:</span> Any<span class="token punctuation">,</span>
+        target_kwargs<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span>Dict<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">,</span> Any<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+        name<span class="token punctuation">:</span> Optional<span class="token punctuation">[</span><span class="token builtin">str</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+    <span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+        <span class="token triple-quoted-string string">"""Constructs a Rule instance.
+
+        :arg Matcher matcher: a `Matcher` instance used for determining
+            whether the rule should be considered a match for a specific
+            request.
+        :arg target: a Rule's target (typically a ``RequestHandler`` or
+            `~.httputil.HTTPServerConnectionDelegate` subclass or even a nested `Router`,
+            depending on routing implementation).
+        :arg dict target_kwargs: a dict of parameters that can be useful
+            at the moment of target instantiation (for example, ``status_code``
+            for a ``RequestHandler`` subclass). They end up in
+            ``target_params['target_kwargs']`` of `RuleRouter.get_target_delegate`
+            method.
+        :arg str name: the name of the rule that can be used to find it
+            in `ReversibleRouter.reverse_url` implementation.
+        """</span>
+        <span class="token keyword">if</span> <span class="token builtin">isinstance</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> <span class="token builtin">str</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+            <span class="token comment"># import the Module and instantiate the class</span>
+            <span class="token comment"># Must be a fully qualified name (module.ClassName)</span>
+            target <span class="token operator">=</span> import_object<span class="token punctuation">(</span>target<span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>matcher <span class="token operator">=</span> matcher  <span class="token comment"># type: Matcher</span>
+        self<span class="token punctuation">.</span>target <span class="token operator">=</span> target
+        self<span class="token punctuation">.</span>target_kwargs <span class="token operator">=</span> target_kwargs <span class="token keyword">if</span> target_kwargs <span class="token keyword">else</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+        self<span class="token punctuation">.</span>name <span class="token operator">=</span> name<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>一条路由规则组成结构还是比较简单的， 一共就4部分， 上面的英文文档其实已经说的比较清楚了</p>
+<ul>
+<li>matcher  其实就是在我们写的正则路由中包装了一层</li>
+<li>target   request请求开始后路由到对应的target对象去处理， 这个target对象可以是典型的<code>RequestHandler</code>或是<code>httputil.HTTPServerConnectionDelegate</code>的实现类或是还可以是一个嵌套的<code>Router</code>类实例</li>
+<li>target_kwargs  顾名思义， 就是给target（请求处理对象）的参数</li>
+<li>name   路由反向解析的名字</li>
+</ul>
+<p>到这也基本可以明白一个app初始化后， 主要就是一些内部参数的初始化， 以及最重要的路由绑定等等处理。 </p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css"></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">yscl</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://blog.yscl.top/2021/03/25/yuan-ma-yue-du/3-application-chu-shi-hua-yue-du/">http://blog.yscl.top/2021/03/25/yuan-ma-yue-du/3-application-chu-shi-hua-yue-du/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.yscl.top" target="_blank">博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BC%82%E6%AD%A5/">异步</a><a class="post-meta__tags" href="/tags/python/">python</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/03/25/yuan-ma-yue-du/2-tornado-guan-fang-demo/"><img class="prev-cover" src="https://lovelijunyi.gitee.io/img/featureimages/13.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">tornado官方demo</div></div></a></div><div class="next-post pull-right"><a href="/2021/03/25/yuan-ma-yue-du/1-jian-hua-ban-yi-bu-kuang-jia/"><img class="next-cover" src="/img/featureimages/3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">简化版异步框架</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/03/25/yuan-ma-yue-du/4-qi-dong-httpserver/" title="启动httpserver"><img class="cover" src="/img/featureimages/3.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-03-25</div><div class="title">启动httpserver</div></div></a></div><div><a href="/2021/03/25/yuan-ma-yue-du/2-tornado-guan-fang-demo/" title="tornado官方demo"><img class="cover" src="https://lovelijunyi.gitee.io/img/featureimages/13.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-03-25</div><div class="title">tornado官方demo</div></div></a></div><div><a href="/2021/03/25/yuan-ma-yue-du/1-jian-hua-ban-yi-bu-kuang-jia/" title="简化版异步框架"><img class="cover" src="/img/featureimages/3.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-03-25</div><div class="title">简化版异步框架</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">yscl</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/06/21/go/1-env/" title="无题"><img src="/img/featureimages/3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/2021/06/21/go/1-env/" title="无题">无题</a><time datetime="2021-06-21T07:38:03.657Z" title="发表于 2021-06-21 15:38:03">2021-06-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/06/21/go/readme/" title="无题"><img src="/img/featureimages/5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/2021/06/21/go/readme/" title="无题">无题</a><time datetime="2021-06-21T07:38:03.657Z" title="发表于 2021-06-21 15:38:03">2021-06-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/06/21/hello-world/" title="Hello World"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2021/06/21/hello-world/" title="Hello World">Hello World</a><time datetime="2021-06-21T06:14:10.610Z" title="发表于 2021-06-21 14:14:10">2021-06-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/11/go/basic-go-reflect/" title="Go反射总结"><img src="/img/featureimages/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go反射总结"/></a><div class="content"><a class="title" href="/2021/05/11/go/basic-go-reflect/" title="Go反射总结">Go反射总结</a><time datetime="2021-05-10T16:00:00.000Z" title="发表于 2021-05-11 00:00:00">2021-05-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/04/30/go/2-shortcut/" title="基于go-zero框架搭建短链服务Demo"><img src="/img/featureimages/1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于go-zero框架搭建短链服务Demo"/></a><div class="content"><a class="title" href="/2021/04/30/go/2-shortcut/" title="基于go-zero框架搭建短链服务Demo">基于go-zero框架搭建短链服务Demo</a><time datetime="2021-04-29T16:00:00.000Z" title="发表于 2021-04-30 00:00:00">2021-04-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By yscl</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><div class="js-pjax"><script async="async">var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> {preloader.endLoading()})
+setTimeout(function(){preloader.endLoading();}, 2000);</script></div><div class="js-pjax"></div><script async data-pjax src="/js/custom/randombg.js"></script><script async data-pjax src="/js/custom/diytitle.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+                        function butterfly_clock_injector_config(){
+                          var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+                          var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="/img/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+                          console.log('已挂载butterfly_clock')
+                          // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                          parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+                          }
+                        if( document.getElementsByClassName('sticky_layout')[0] && (location.pathname ==='all'|| 'all' ==='all')){
+                        butterfly_clock_injector_config()
+                        }
+                      </script><script src="https://pv.sohu.com/cityjson?ie=utf-8"></script><script data-pjax src="https://cdn.jsdelivr.net/npm/hexo-butterfly-clock/lib/clock.min.js"></script><script data-pjax>
+                        function butterfly_swiper_injector_config(){
+                          var parent_div_git = document.getElementById('recent-posts');
+                          var item_html = '<div class="recent-post-item" style="height: auto;width: 100%"><div class="blog-slider swiper-container-fade swiper-container-horizontal" id="swiper_container"><div class="blog-slider__wrp swiper-wrapper" style="transition-duration: 0ms;"><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" href="2021/05/11/go/basic-go-reflect/" alt=""><img width="48" height="48" src="/img/featureimages/4.jpg" alt=""/></a><div class="blog-slider__content"><span class="blog-slider__code">2021-05-11</span><a class="blog-slider__title" href="2021/05/11/go/basic-go-reflect/" alt="">Go反射总结</a><div class="blog-slider__text">go反射</div><a class="blog-slider__button" href="2021/05/11/go/basic-go-reflect/" alt="">详情   </a></div></div></div><div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div></div></div>';
+                          console.log('已挂载butterfly_swiper')
+                          // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                          parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+                          }
+                        if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+                        butterfly_swiper_injector_config()
+                        }
+                      </script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.1.6/js/swiper.min.js"></script><script defer data-pjax src="https://cdn.jsdelivr.net/npm/hexo-butterfly-swiper/lib/swiper_init.js"></script><!-- hexo injector body_end end --></body></html>

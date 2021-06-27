@@ -1,0 +1,509 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>基于go-zero框架搭建短链服务Demo | 博客</title><meta name="keywords" content="微服务,go-zero"><meta name="author" content="yscl"><meta name="copyright" content="yscl"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="根据go-zero官方的demo示例, 尝试搭建一个shorturl短链服务. 搭建短链服务环境准备整个服务叫做短链服务, 项目名称就叫做shorturl, 然后需要在里面创建两个文件夹api和rpc.  依赖module shorturl  go 1.15  require ( 	github.com&#x2F;antlr&#x2F;antlr4 v0.0.0-20210412152734-e404d26f6142">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于go-zero框架搭建短链服务Demo">
+<meta property="og:url" content="http://blog.yscl.top/2021/04/30/go/2-shortcut/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="根据go-zero官方的demo示例, 尝试搭建一个shorturl短链服务. 搭建短链服务环境准备整个服务叫做短链服务, 项目名称就叫做shorturl, 然后需要在里面创建两个文件夹api和rpc.  依赖module shorturl  go 1.15  require ( 	github.com&#x2F;antlr&#x2F;antlr4 v0.0.0-20210412152734-e404d26f6142">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://blog.yscl.top/img/featureimages/1.jpg">
+<meta property="article:published_time" content="2021-04-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-04-30T02:46:05.828Z">
+<meta property="article:author" content="yscl">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="go-zero">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://blog.yscl.top/img/featureimages/1.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://blog.yscl.top/2021/04/30/go/2-shortcut/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"prismjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于go-zero框架搭建短链服务Demo',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-04-30 10:46:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const fontSizeVal = saveToLocal.get('global-font-size')
+    if (fontSizeVal !== undefined) {
+      document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+    }
+    })(window)</script><link rel="stylesheet" href="/css/custom/custom.css"  media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/l-lin/font-awesome-animation/dist/font-awesome-animation.min.css"  media="defer" onload="this.media='all'"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-butterfly-clock/lib/clock.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.1.6/css/swiper.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-butterfly-swiper/lib/swiperstyle.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/featureimages/1.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">基于go-zero框架搭建短链服务Demo</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-04-29T16:00:00.000Z" title="发表于 2021-04-30 00:00:00">2021-04-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-04-30T02:46:05.828Z" title="更新于 2021-04-30 10:46:05">2021-04-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/go/">go</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="基于go-zero框架搭建短链服务Demo"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>根据go-zero官方的demo示例, 尝试搭建一个shorturl短链服务.</p>
+<h2 id="搭建短链服务"><a href="#搭建短链服务" class="headerlink" title="搭建短链服务"></a>搭建短链服务</h2><h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><p>整个服务叫做短链服务, 项目名称就叫做shorturl, 然后需要在里面创建两个文件夹<code>api</code>和<code>rpc</code>. </p>
+<h4 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h4><pre class="line-numbers language-go" data-language="go"><code class="language-go">module shorturl
+
+<span class="token keyword">go</span> <span class="token number">1.15</span>
+
+require <span class="token punctuation">(</span>
+	github<span class="token punctuation">.</span>com<span class="token operator">/</span>antlr<span class="token operator">/</span>antlr4 v0<span class="token punctuation">.</span><span class="token number">0.0</span><span class="token operator">-</span><span class="token number">20210412152734</span><span class="token operator">-</span>e404d26f6142 <span class="token comment">// indirect</span>
+	github<span class="token punctuation">.</span>com<span class="token operator">/</span><span class="token keyword">go</span><span class="token operator">-</span>sql<span class="token operator">-</span>driver<span class="token operator">/</span>mysql v1<span class="token punctuation">.</span><span class="token number">6.0</span> <span class="token comment">// indirect</span>
+	github<span class="token punctuation">.</span>com<span class="token operator">/</span>golang<span class="token operator">/</span>protobuf v1<span class="token punctuation">.</span><span class="token number">4.2</span>
+	github<span class="token punctuation">.</span>com<span class="token operator">/</span>iancoleman<span class="token operator">/</span>strcase v0<span class="token punctuation">.</span><span class="token number">1.3</span> <span class="token comment">// indirect</span>
+	github<span class="token punctuation">.</span>com<span class="token operator">/</span>tal<span class="token operator">-</span>tech<span class="token operator">/</span><span class="token keyword">go</span><span class="token operator">-</span>zero v1<span class="token punctuation">.</span><span class="token number">1.6</span>
+	<span class="token keyword">go</span><span class="token punctuation">.</span>uber<span class="token punctuation">.</span>org<span class="token operator">/</span>automaxprocs v1<span class="token punctuation">.</span><span class="token number">4.0</span> <span class="token comment">// indirect</span>
+	google<span class="token punctuation">.</span>golang<span class="token punctuation">.</span>org<span class="token operator">/</span>grpc v1<span class="token punctuation">.</span><span class="token number">29.1</span>
+<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="编写api服务"><a href="#编写api服务" class="headerlink" title="编写api服务"></a>编写api服务</h3><p>既然是做微服务demo, 那么最重要的就是编写api网关相关的代码了, 这相当于微服务的大脑. 根据官方文档, 首先需要使用goctl工具创建api的模板代码.  </p>
+<h4 id="编写api文件"><a href="#编写api文件" class="headerlink" title="编写api文件"></a>编写api文件</h4><p>进入到api文件夹下,  使用<code>goctl api -o shorturl.api</code>命令, 会在当前目录下创建出一个<code>shorturl.api</code>的模板文件, 接下来需要对这个文件进行编辑. </p>
+<p>先不用管文件内的info相关信息, 直接去除. 然后就可以像go的编码习惯一样, 先定义变量(传输用的结构体) , 然后编写接口函数(这里叫做定义服务). </p>
+<blockquote>
+<p>因为是短链服务,  两个基础功能是必须的, 一个是根据原始url返回缩短后的url,  一个是根据缩短后的url去查原始url. 由这两个功能, 需要定义的数据传输的结构体就容易了. </p>
+</blockquote>
+<p>整体代码如下所示</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">syntax <span class="token operator">=</span> <span class="token string">"v1"</span>
+
+<span class="token comment">// 定义根据短链查原始链接的请求与响应的相关结构体</span>
+<span class="token keyword">type</span> <span class="token punctuation">(</span>
+	expandReq <span class="token punctuation">{</span>
+		shorten <span class="token builtin">string</span> <span class="token string">`form:shorten`</span>
+	<span class="token punctuation">}</span>
+
+	expandResp <span class="token punctuation">{</span>
+		url <span class="token builtin">string</span> <span class="token string">`json:url`</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">)</span>
+
+<span class="token comment">// 定义根据长链缩短原始链接的相关结构体</span>
+<span class="token keyword">type</span> <span class="token punctuation">(</span>
+	shortenReq <span class="token punctuation">{</span>
+		url <span class="token builtin">string</span> <span class="token string">`from:url`</span>
+	<span class="token punctuation">}</span>
+
+	shortenResp <span class="token punctuation">{</span>
+		shorten <span class="token builtin">string</span> <span class="token string">`json:shorten`</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">)</span>
+
+<span class="token comment">// 定义一个shorturl的服务, 名字叫做shorturl-api</span>
+<span class="token comment">// 主要定义两个接口功能, 一个用来缩短原始长链, 一个用来根据短链来查原始链接</span>
+service shorturl<span class="token operator">-</span>api <span class="token punctuation">{</span>
+	<span class="token comment">// 定义server需要用到的相关属性</span>
+	@server <span class="token punctuation">(</span>
+		handler<span class="token punctuation">:</span> shortenHandler
+	<span class="token punctuation">)</span>
+	<span class="token comment">// 定义url, 参数就是上面定义到的结构体, 返回信息也在上面进行了定义</span>
+	get <span class="token operator">/</span><span class="token function">shorten</span><span class="token punctuation">(</span>shortenReq<span class="token punctuation">)</span> <span class="token function">returns</span><span class="token punctuation">(</span>shortenResp<span class="token punctuation">)</span>
+
+	@server <span class="token punctuation">(</span>
+		handler<span class="token punctuation">:</span> expandHandler
+	<span class="token punctuation">)</span>
+	get <span class="token operator">/</span><span class="token function">expand</span><span class="token punctuation">(</span>expandReq<span class="token punctuation">)</span> <span class="token function">returns</span><span class="token punctuation">(</span>expandResp<span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>简单对上面的代码进行说明</p>
+<ul>
+<li>type和go一样进行结构体的声明</li>
+<li>service shorturl-api表示定义一个叫shorturl-api的服务, 里面会定义这个服务相关的http请求方法</li>
+<li>@server部分用来定义 server 端用到的属性</li>
+</ul>
+<ul>
+<li><code>handler</code> 定义了服务端 handler 名字</li>
+<li><code>get /shorten(shortenReq) returns(shortenResp)</code> 定义了 get 方法的路由、请求参数、返回参数等</li>
+</ul>
+<h4 id="生成api网关代码"><a href="#生成api网关代码" class="headerlink" title="生成api网关代码"></a>生成api网关代码</h4><p>使用goctl工具生成api gateway代码, 同样在api目录下使用<code> goctl api go -api shorturl.api -dir .</code>命令生成api网关相关的代码. </p>
+<p>大致目录如下所示</p>
+<pre class="line-numbers language-none"><code class="language-none">├── api
+│   ├── etc
+│   │   └── shorturl-api.yaml         // 配置文件
+│   ├── internal
+│   │   ├── config
+│   │   │   └── config.go             // 定义配置
+│   │   ├── handler
+│   │   │   ├── expandhandler.go      // 实现 expandHandler
+│   │   │   ├── routes.go             // 定义路由处理
+│   │   │   └── shortenhandler.go     // 实现 shortenHandler
+│   │   ├── logic
+│   │   │   ├── expandlogic.go        // 实现 ExpandLogic
+│   │   │   └── shortenlogic.go       // 实现 ShortenLogic
+│   │   ├── svc
+│   │   │   └── servicecontext.go     // 定义 ServiceContext
+│   │   └── types
+│   │       └── types.go              // 定义请求、返回结构体
+│   ├── shorturl.api
+│   └── shorturl.go                   // main 入口定义<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>到这其实就已经可以启动api网关了, 默认的监听端口为8888</p>
+<p><code>go run shorturl.go -f etc/shorturl-api.yaml</code></p>
+<p>终端会打印出<code>Starting server at 0.0.0.0:8888...</code>的log消息, 说明到目前为止, 环境配的没啥问题. </p>
+<p>由于在shorturl.api文件中已经定义好了两个路由, 所以可以直接去请求api网关接口测试</p>
+<p><strong>发起请求测试</strong></p>
+<p><code>curl -i "http://localhost:8888/shorten?url=http://www.xiaoheiban.cn"</code></p>
+<p>返回信息</p>
+<pre class="line-numbers language-none"><code class="language-none">HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Thu, 29 Apr 2021 08:20:51 GMT
+Content-Length: 14
+
+{"shorten":""}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>因为当前没有对生成的代码做任何的逻辑处理, 所以就直接返回shorturl.api文件中定义的shortenResp的默认值. </p>
+<p>如果需要修改返回逻辑可以直接像下面这么操作</p>
+<ul>
+<li>可以修改 <code>internal/svc/servicecontext.go</code> 来传递服务依赖（如果需要）</li>
+<li>实现逻辑可以修改 <code>internal/logic</code> 下的对应文件</li>
+</ul>
+<p>但是直接修改里面的返回逻辑的话, 就又变成单体应用了, 就不符合这是个微服务框架demo的初衷. 所以接下来需要编写rpc程序来实现相关的业务逻辑代码. </p>
+<h3 id="编写-transform-rpc-服务"><a href="#编写-transform-rpc-服务" class="headerlink" title="编写 transform rpc 服务"></a>编写 transform rpc 服务</h3><h4 id="编写-transform-proto-文件"><a href="#编写-transform-proto-文件" class="headerlink" title="编写 transform.proto 文件"></a>编写 <code>transform.proto</code> 文件</h4><p>由于服务之间通信是使用grpc,  因而需要按照grpc的逻辑来编写rpc的逻辑.  </p>
+<p>grpc的基础思想：定义一个服务， 指定其可以被远程调用的方法及其参数和返回类型。gRPC 默认使用 <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/">protocol buffers</a> 作为接口定义语言，来描述服务接口和有效载荷消息结构。</p>
+<p>Protobuf的语法教程可以参考这篇博客 [ <a href="">Protobuf 终极教程</a>] 和<a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/overview#services">官方教程</a></p>
+<p>首先在rpc目录下<strong>创建transform目录</strong>, 代表这个一个Transform服务, 进入到对应目录, 然后需要编写proto文件,  这个可以通过goctl工具生成一个模板文件. </p>
+<pre class="line-numbers language-protobuf" data-language="protobuf"><code class="language-protobuf"><span class="token keyword">syntax</span> <span class="token operator">=</span> <span class="token string">"proto3"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">package</span> transform<span class="token punctuation">;</span>
+
+<span class="token keyword">message</span> <span class="token class-name">expandReq</span> <span class="token punctuation">{</span>
+  <span class="token builtin">string</span> shorten <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">message</span> <span class="token class-name">expandResp</span> <span class="token punctuation">{</span>
+  <span class="token builtin">string</span> url <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">message</span> <span class="token class-name">shortenReq</span> <span class="token punctuation">{</span>
+  <span class="token builtin">string</span> url <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">message</span> <span class="token class-name">shortenResp</span> <span class="token punctuation">{</span>
+  <span class="token builtin">string</span> shorten <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 定义rpc传输的格式</span>
+<span class="token keyword">service</span> <span class="token class-name">transform</span> <span class="token punctuation">{</span>
+  <span class="token keyword">rpc</span> <span class="token function">shorten</span><span class="token punctuation">(</span><span class="token class-name">shortenReq</span><span class="token punctuation">)</span> <span class="token keyword">returns</span><span class="token punctuation">(</span><span class="token class-name">shortenResp</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">rpc</span> <span class="token function">expand</span><span class="token punctuation">(</span><span class="token class-name">expandReq</span><span class="token punctuation">)</span> <span class="token keyword">returns</span><span class="token punctuation">(</span><span class="token class-name">expandResp</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="生成rpc代码"><a href="#生成rpc代码" class="headerlink" title="生成rpc代码"></a>生成rpc代码</h4><p>定义好了服务之间通信的数据格式和相应服务, 接下来就可以用goctl工具生成相应rpc代码. 这一命令依赖于protoc生成代码工具, 需要事先在环境准备中准备完整. </p>
+<p><code>goctl rpc proto -src transform.proto -dir .</code> 执行完成之后, 会生成如下的文件结构:</p>
+<pre class="line-numbers language-none"><code class="language-none">rpc/transform
+├── etc
+│   └── transform.yaml              // 配置文件
+├── internal
+│   ├── config
+│   │   └── config.go               // 配置定义
+│   ├── logic
+│   │   ├── expandlogic.go          // expand 业务逻辑在这里实现
+│   │   └── shortenlogic.go         // shorten 业务逻辑在这里实现
+│   ├── server
+│   │   └── transformerserver.go    // 调用入口, 不需要修改
+│   └── svc
+│       └── servicecontext.go       // 定义 ServiceContext，传递依赖
+├── transform
+│   └── transform.pb.go
+├── transform.go                    // rpc 服务 main 函数
+├── transform.proto
+└── transformer
+    ├── transformer.go              // 提供了外部调用方法，无需修改
+    ├── transformer_mock.go         // mock 方法，测试用
+    └── types.go                    // request/response 结构体定义<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>文件生成之后, 接下来可以直接运行代码. </p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">go</span> run transform<span class="token punctuation">.</span><span class="token keyword">go</span> <span class="token operator">-</span>f etc<span class="token operator">/</span>transform<span class="token punctuation">.</span>yaml<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>运行之前, 需要检查一下etcd是否有正常运行, 因为微服务之间的注册发现依赖于etcd来进行管理. </p>
+<h3 id="api网关调用rpc服务"><a href="#api网关调用rpc服务" class="headerlink" title="api网关调用rpc服务"></a>api网关调用rpc服务</h3><p>修改api/etc目录下的配置文件 <code>shorturl-api.yaml</code>，增加如下内容</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">Transform</span><span class="token punctuation">:</span>
+  <span class="token key atrule">Etcd</span><span class="token punctuation">:</span>
+    <span class="token key atrule">Hosts</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> localhost<span class="token punctuation">:</span><span class="token number">2379</span>
+    <span class="token key atrule">Key</span><span class="token punctuation">:</span> transform.rpc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>通过 etcd 自动去发现可用的 transform 服务.</p>
+<p>接下来需要修改config配置, 添加rpc的依赖选项, 具体是修改 <code>internal/config/config.go</code> 如下，增加 transform 服务依赖.</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">type</span> Config <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+	rest<span class="token punctuation">.</span>RestConf
+	Transform zrpc<span class="token punctuation">.</span>RpcClientConf
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在这个config里面添加依赖之后, 简单阅读生成的代码段, 知道这个config会包装成context, 传进与路由匹配的Handler中. 这样我们的业务逻辑就可以利用到这个依赖了, 也就是可以通过rpc调用其他服务的代码了.  这里只是简单的提一下, 后面再来看这里的源码到底是如何实现的. </p>
+<p>修改 <code>internal/svc/servicecontext.go</code>，如下：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token comment">// 这个是对原始的config做了一层包装.</span>
+<span class="token keyword">type</span> ServiceContext <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+	Config config<span class="token punctuation">.</span>Config
+	Transformer transformer<span class="token punctuation">.</span>Transformer
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">NewServiceContext</span><span class="token punctuation">(</span>c config<span class="token punctuation">.</span>Config<span class="token punctuation">)</span> <span class="token operator">*</span>ServiceContext <span class="token punctuation">{</span>
+	<span class="token keyword">return</span> <span class="token operator">&amp;</span>ServiceContext<span class="token punctuation">{</span>
+		Config<span class="token punctuation">:</span> c<span class="token punctuation">,</span>
+		<span class="token comment">// 下面添加Transformer</span>
+		Transformer<span class="token punctuation">:</span> transformer<span class="token punctuation">.</span><span class="token function">NewTransformer</span><span class="token punctuation">(</span>zrpc<span class="token punctuation">.</span><span class="token function">MustNewClient</span><span class="token punctuation">(</span>c<span class="token punctuation">.</span>Transform<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>最终不同的业务逻辑之间就是通过这个ServiceContext对象来传递依赖的. </p>
+<p>接下来需要扩充api网关的逻辑. 在expand方法里面补充调用远程rpc接口代码</p>
+<p>修改 <code>internal/logic/expandlogic.go</code> 里的 <code>Expand</code> 方法，如下：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>l <span class="token operator">*</span>ExpandLogic<span class="token punctuation">)</span> <span class="token function">Expand</span><span class="token punctuation">(</span>req types<span class="token punctuation">.</span>ExpandReq<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>types<span class="token punctuation">.</span>ExpandResp<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token comment">// 在这里是真正实现自己的业务逻辑, 这里调用rpc服务</span>
+	resp<span class="token punctuation">,</span> err <span class="token operator">:=</span> l<span class="token punctuation">.</span>svcCtx<span class="token punctuation">.</span>Transformer<span class="token punctuation">.</span><span class="token function">Expand</span><span class="token punctuation">(</span>l<span class="token punctuation">.</span>ctx<span class="token punctuation">,</span> <span class="token operator">&amp;</span>transformer<span class="token punctuation">.</span>ExpandReq<span class="token punctuation">{</span>
+		Shorten<span class="token punctuation">:</span> req<span class="token punctuation">.</span>Shorten<span class="token punctuation">,</span>
+	<span class="token punctuation">}</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+		<span class="token keyword">return</span> <span class="token operator">&amp;</span>types<span class="token punctuation">.</span>ExpandResp<span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> err
+	<span class="token punctuation">}</span>
+	<span class="token keyword">return</span> <span class="token operator">&amp;</span>types<span class="token punctuation">.</span>ExpandResp<span class="token punctuation">{</span>Url<span class="token punctuation">:</span> resp<span class="token punctuation">.</span>Url<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>同理需要补充生成短链的调用rpc的代码逻辑. 修改 <code>internal/logic/shortenlogic.go</code>，如下：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>l <span class="token operator">*</span>ShortenLogic<span class="token punctuation">)</span> <span class="token function">Shorten</span><span class="token punctuation">(</span>req types<span class="token punctuation">.</span>ShortenReq<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>types<span class="token punctuation">.</span>ShortenResp<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	resp<span class="token punctuation">,</span> err <span class="token operator">:=</span> l<span class="token punctuation">.</span>svcCtx<span class="token punctuation">.</span>Transformer<span class="token punctuation">.</span><span class="token function">Shorten</span><span class="token punctuation">(</span>l<span class="token punctuation">.</span>ctx<span class="token punctuation">,</span> <span class="token operator">&amp;</span>transformer<span class="token punctuation">.</span>ShortenReq<span class="token punctuation">{</span>
+		Url<span class="token punctuation">:</span> req<span class="token punctuation">.</span>Url<span class="token punctuation">,</span>
+	<span class="token punctuation">}</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+		<span class="token keyword">return</span> <span class="token operator">&amp;</span>types<span class="token punctuation">.</span>ShortenResp<span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token boolean">nil</span>
+	<span class="token punctuation">}</span>
+	<span class="token keyword">return</span> <span class="token operator">&amp;</span>types<span class="token punctuation">.</span>ShortenResp<span class="token punctuation">{</span>Shorten<span class="token punctuation">:</span> resp<span class="token punctuation">.</span>Shorten<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>至此, api网关调用rpc的逻辑代码都已书写完毕, 但是rpc之前只是自动生成了代码, 真正的服务代码逻辑还没有实现, 需要接下来去完成. </p>
+<h3 id="数据库与model"><a href="#数据库与model" class="headerlink" title="数据库与model"></a>数据库与model</h3><p>由于短链服务的实现代码是在rpc中完成的, 接下来需要完善一系列逻辑.</p>
+<p>首先是需要用到的mysql和redis数据库. </p>
+<h4 id="定义数据库表"><a href="#定义数据库表" class="headerlink" title="定义数据库表"></a>定义数据库表</h4><p>进入到rpc/transform目录下, 创建model文件夹, 创建<code>shorturl.sql</code>文件</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token punctuation">`</span>shorturl<span class="token punctuation">`</span> <span class="token punctuation">(</span>
+  <span class="token punctuation">`</span>shorten<span class="token punctuation">`</span> <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">255</span><span class="token punctuation">)</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'shorten key'</span><span class="token punctuation">,</span>
+  <span class="token punctuation">`</span>url<span class="token punctuation">`</span> <span class="token keyword">varchar</span><span class="token punctuation">(</span><span class="token number">255</span><span class="token punctuation">)</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">COMMENT</span> <span class="token string">'original url'</span><span class="token punctuation">,</span>
+  <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span><span class="token punctuation">`</span>shorten<span class="token punctuation">`</span><span class="token punctuation">)</span>
+<span class="token punctuation">)</span> <span class="token keyword">ENGINE</span><span class="token operator">=</span><span class="token keyword">InnoDB</span> <span class="token keyword">DEFAULT</span> <span class="token keyword">CHARSET</span><span class="token operator">=</span>utf8mb4<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>短链服务说简单点就是一个原始长链和生成的短链需要建立一个映射关系, 然后一般需要拿到那个短链来到数据库查原始长链, 然后302重定向原始链接的过程. 所以上面的数据库就设计的比较简单, 只有两个关键字段</p>
+<p>登录到数据库, 创建数据库, 执行刚刚的sql文件. </p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">create</span> <span class="token keyword">database</span> gozero<span class="token punctuation">;</span>
+<span class="token keyword">use</span> gozero<span class="token punctuation">;</span>
+source shorturl<span class="token punctuation">.</span><span class="token keyword">sql</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>在model目录下执行命令<code> goctl model mysql ddl -c -src shorturl.sql -dir .</code>可以生成带curd+cache的模板代码.  -c<code>表示使用</code>redis cache</p>
+<p>最后生成的文件结构为</p>
+<pre class="line-numbers language-none"><code class="language-none">rpc/transform/model
+├── shorturl.sql
+├── shorturlmodel.go              // CRUD+cache 代码
+└── vars.go                       // 定义常量和变量<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="修改rpc服务"><a href="#修改rpc服务" class="headerlink" title="修改rpc服务"></a>修改rpc服务</h3><h4 id="修改数据库参数"><a href="#修改数据库参数" class="headerlink" title="修改数据库参数"></a>修改数据库参数</h4><p>涉及到数据库的操作, 需要配置数据库连接参数. </p>
+<p>修改 <code>rpc/transform/etc/transform.yaml</code>，增加如下内容：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">DataSource</span><span class="token punctuation">:</span> root<span class="token punctuation">:</span>root@tcp(localhost<span class="token punctuation">:</span>3306)/gozero
+<span class="token key atrule">Table</span><span class="token punctuation">:</span> shorturl
+<span class="token key atrule">Cache</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">Host</span><span class="token punctuation">:</span> localhost<span class="token punctuation">:</span><span class="token number">6379</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>可以使用多个 redis 作为 cache，支持 redis 单点或者 redis 集群. </p>
+<h4 id="修改依赖文件"><a href="#修改依赖文件" class="headerlink" title="修改依赖文件"></a>修改依赖文件</h4><p>修改<code>rpc/transform/internal/config/config.go</code>文件, 添加数据库相关的依赖</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">type</span> Config <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+	zrpc<span class="token punctuation">.</span>RpcServerConf
+	<span class="token comment">// 暂时还不知道下面几个配置的具体左右, 需要查看源码来查看. </span>
+	DataSource <span class="token builtin">string</span>
+	Table <span class="token builtin">string</span>
+	Cache cache<span class="token punctuation">.</span>CacheConf
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>增加mysql和redis依赖</p>
+<p>修改 <code>rpc/transform/internal/svc/servicecontext.go</code>，如下：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">type</span> ServiceContext <span class="token keyword">struct</span> <span class="token punctuation">{</span>
+	Config config<span class="token punctuation">.</span>Config
+	Model model<span class="token punctuation">.</span>ShorturlModel
+<span class="token punctuation">}</span>
+
+<span class="token keyword">func</span> <span class="token function">NewServiceContext</span><span class="token punctuation">(</span>c config<span class="token punctuation">.</span>Config<span class="token punctuation">)</span> <span class="token operator">*</span>ServiceContext <span class="token punctuation">{</span>
+	<span class="token keyword">return</span> <span class="token operator">&amp;</span>ServiceContext<span class="token punctuation">{</span>
+		Config<span class="token punctuation">:</span> c<span class="token punctuation">,</span>
+		Model<span class="token punctuation">:</span> model<span class="token punctuation">.</span><span class="token function">NewShorturlModel</span><span class="token punctuation">(</span>sqlx<span class="token punctuation">.</span><span class="token function">NewMysql</span><span class="token punctuation">(</span>c<span class="token punctuation">.</span>DataSource<span class="token punctuation">)</span><span class="token punctuation">,</span> c<span class="token punctuation">.</span>Cache<span class="token punctuation">)</span><span class="token punctuation">,</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>接下来需要编写生成短链和还原短链的逻辑代码了. </p>
+<p>修改 <code>rpc/transform/internal/logic/expandlogic.go</code>，如下：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>l <span class="token operator">*</span>ExpandLogic<span class="token punctuation">)</span> <span class="token function">Expand</span><span class="token punctuation">(</span>in <span class="token operator">*</span>transform<span class="token punctuation">.</span>ExpandReq<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>transform<span class="token punctuation">.</span>ExpandResp<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token comment">// 根据短链查库还原长链</span>
+	shorturl<span class="token punctuation">,</span> err <span class="token operator">:=</span> l<span class="token punctuation">.</span>svcCtx<span class="token punctuation">.</span>Model<span class="token punctuation">.</span><span class="token function">FindOne</span><span class="token punctuation">(</span>in<span class="token punctuation">.</span>Shorten<span class="token punctuation">)</span>
+	<span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+		<span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> err
+	<span class="token punctuation">}</span>
+
+	<span class="token keyword">return</span> <span class="token operator">&amp;</span>transform<span class="token punctuation">.</span>ExpandResp<span class="token punctuation">{</span>Url<span class="token punctuation">:</span> shorturl<span class="token punctuation">.</span>Url<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>修改 <code>rpc/transform/internal/logic/shortenlogic.go</code>，如下：</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>l <span class="token operator">*</span>ShortenLogic<span class="token punctuation">)</span> <span class="token function">Shorten</span><span class="token punctuation">(</span>in <span class="token operator">*</span>transform<span class="token punctuation">.</span>ShortenReq<span class="token punctuation">)</span> <span class="token punctuation">(</span><span class="token operator">*</span>transform<span class="token punctuation">.</span>ShortenResp<span class="token punctuation">,</span> <span class="token builtin">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token comment">// 简单的实现短链的方法, 只是粗略的实现相关的逻辑. 不考虑重复碰撞的问题.</span>
+	key <span class="token operator">:=</span> hash<span class="token punctuation">.</span><span class="token function">Md5Hex</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token function">byte</span><span class="token punctuation">(</span>in<span class="token punctuation">.</span>Url<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token number">6</span><span class="token punctuation">]</span>
+	<span class="token boolean">_</span><span class="token punctuation">,</span> err <span class="token operator">:=</span> l<span class="token punctuation">.</span>svcCtx<span class="token punctuation">.</span>Model<span class="token punctuation">.</span><span class="token function">Insert</span><span class="token punctuation">(</span>model<span class="token punctuation">.</span>Shorturl<span class="token punctuation">{</span>
+		Url<span class="token punctuation">:</span>     in<span class="token punctuation">.</span>Url<span class="token punctuation">,</span>
+		Shorten<span class="token punctuation">:</span> key<span class="token punctuation">,</span>
+	<span class="token punctuation">}</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">{</span>
+		<span class="token keyword">return</span> <span class="token boolean">nil</span><span class="token punctuation">,</span> err
+	<span class="token punctuation">}</span>
+	<span class="token keyword">return</span> <span class="token operator">&amp;</span>transform<span class="token punctuation">.</span>ShortenResp<span class="token punctuation">{</span>
+		Shorten<span class="token punctuation">:</span> key<span class="token punctuation">,</span>
+	<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token boolean">nil</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="完整调用测试"><a href="#完整调用测试" class="headerlink" title="完整调用测试"></a>完整调用测试</h3><p>这里面有一个小疑问(必须先启动rpc服务, 然后api网关才能正常启动). </p>
+<p>在终端输入: <code> curl -i "http://localhost:8888/shorten?url=http://www.google.com"</code></p>
+<p>返回信息</p>
+<pre class="line-numbers language-none"><code class="language-none">HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Fri, 30 Apr 2021 02:36:22 GMT
+Content-Length: 20
+
+{"shorten":"ed646a"}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>拿到刚才获取到的短链, 然后去获取原始长链</p>
+<p><code>curl -i "http://localhost:8888/expand?shorten=ed646a"</code></p>
+<pre class="line-numbers language-none"><code class="language-none">HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Fri, 30 Apr 2021 02:36:53 GMT
+Content-Length: 31
+
+{"url":"http://www.google.com"}<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>可以看到正确的返回了原始的长链, 说明demo服务已经完全跑通了. </p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css"></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">yscl</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://blog.yscl.top/2021/04/30/go/2-shortcut/">http://blog.yscl.top/2021/04/30/go/2-shortcut/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.yscl.top" target="_blank">博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a><a class="post-meta__tags" href="/tags/go-zero/">go-zero</a></div><div class="post_share"><div class="social-share" data-image="/img/featureimages/1.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/05/11/go/basic-go-reflect/"><img class="prev-cover" src="/img/featureimages/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Go反射总结</div></div></a></div><div class="next-post pull-right"><a href="/2021/04/28/linux/frp-network/"><img class="next-cover" src="/img/featureimages/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">基于frp进行内网穿透</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">yscl</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA%E7%9F%AD%E9%93%BE%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text">搭建短链服务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.1.</span> <span class="toc-text">环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96"><span class="toc-number">1.1.1.</span> <span class="toc-text">依赖</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99api%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.2.</span> <span class="toc-text">编写api服务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E5%86%99api%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.</span> <span class="toc-text">编写api文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%88%90api%E7%BD%91%E5%85%B3%E4%BB%A3%E7%A0%81"><span class="toc-number">1.2.2.</span> <span class="toc-text">生成api网关代码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E5%86%99-transform-rpc-%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.3.</span> <span class="toc-text">编写 transform rpc 服务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E5%86%99-transform-proto-%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.1.</span> <span class="toc-text">编写 transform.proto 文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%88%90rpc%E4%BB%A3%E7%A0%81"><span class="toc-number">1.3.2.</span> <span class="toc-text">生成rpc代码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#api%E7%BD%91%E5%85%B3%E8%B0%83%E7%94%A8rpc%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.4.</span> <span class="toc-text">api网关调用rpc服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8Emodel"><span class="toc-number">1.5.</span> <span class="toc-text">数据库与model</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8"><span class="toc-number">1.5.1.</span> <span class="toc-text">定义数据库表</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9rpc%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.6.</span> <span class="toc-text">修改rpc服务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%82%E6%95%B0"><span class="toc-number">1.6.1.</span> <span class="toc-text">修改数据库参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E4%BE%9D%E8%B5%96%E6%96%87%E4%BB%B6"><span class="toc-number">1.6.2.</span> <span class="toc-text">修改依赖文件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E8%B0%83%E7%94%A8%E6%B5%8B%E8%AF%95"><span class="toc-number">1.7.</span> <span class="toc-text">完整调用测试</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/06/21/go/1-env/" title="无题"><img src="/img/featureimages/3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/2021/06/21/go/1-env/" title="无题">无题</a><time datetime="2021-06-21T07:38:03.657Z" title="发表于 2021-06-21 15:38:03">2021-06-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/06/21/go/readme/" title="无题"><img src="/img/featureimages/5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/2021/06/21/go/readme/" title="无题">无题</a><time datetime="2021-06-21T07:38:03.657Z" title="发表于 2021-06-21 15:38:03">2021-06-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/06/21/hello-world/" title="Hello World"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2021/06/21/hello-world/" title="Hello World">Hello World</a><time datetime="2021-06-21T06:14:10.610Z" title="发表于 2021-06-21 14:14:10">2021-06-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/05/11/go/basic-go-reflect/" title="Go反射总结"><img src="/img/featureimages/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go反射总结"/></a><div class="content"><a class="title" href="/2021/05/11/go/basic-go-reflect/" title="Go反射总结">Go反射总结</a><time datetime="2021-05-10T16:00:00.000Z" title="发表于 2021-05-11 00:00:00">2021-05-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/04/30/go/2-shortcut/" title="基于go-zero框架搭建短链服务Demo"><img src="/img/featureimages/1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于go-zero框架搭建短链服务Demo"/></a><div class="content"><a class="title" href="/2021/04/30/go/2-shortcut/" title="基于go-zero框架搭建短链服务Demo">基于go-zero框架搭建短链服务Demo</a><time datetime="2021-04-29T16:00:00.000Z" title="发表于 2021-04-30 00:00:00">2021-04-30</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By yscl</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><div class="js-pjax"><script async="async">var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',()=> {preloader.endLoading()})
+setTimeout(function(){preloader.endLoading();}, 2000);</script></div><div class="js-pjax"></div><script async data-pjax src="/js/custom/randombg.js"></script><script async data-pjax src="/js/custom/diytitle.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+                        function butterfly_clock_injector_config(){
+                          var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+                          var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="/img/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+                          console.log('已挂载butterfly_clock')
+                          // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                          parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+                          }
+                        if( document.getElementsByClassName('sticky_layout')[0] && (location.pathname ==='all'|| 'all' ==='all')){
+                        butterfly_clock_injector_config()
+                        }
+                      </script><script src="https://pv.sohu.com/cityjson?ie=utf-8"></script><script data-pjax src="https://cdn.jsdelivr.net/npm/hexo-butterfly-clock/lib/clock.min.js"></script><script data-pjax>
+                        function butterfly_swiper_injector_config(){
+                          var parent_div_git = document.getElementById('recent-posts');
+                          var item_html = '<div class="recent-post-item" style="height: auto;width: 100%"><div class="blog-slider swiper-container-fade swiper-container-horizontal" id="swiper_container"><div class="blog-slider__wrp swiper-wrapper" style="transition-duration: 0ms;"><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;"><a class="blog-slider__img" href="2021/05/11/go/basic-go-reflect/" alt=""><img width="48" height="48" src="/img/featureimages/4.jpg" alt=""/></a><div class="blog-slider__content"><span class="blog-slider__code">2021-05-11</span><a class="blog-slider__title" href="2021/05/11/go/basic-go-reflect/" alt="">Go反射总结</a><div class="blog-slider__text">go反射</div><a class="blog-slider__button" href="2021/05/11/go/basic-go-reflect/" alt="">详情   </a></div></div></div><div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div></div></div>';
+                          console.log('已挂载butterfly_swiper')
+                          // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                          parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+                          }
+                        if( document.getElementById('recent-posts') && (location.pathname ==='/'|| '/' ==='all')){
+                        butterfly_swiper_injector_config()
+                        }
+                      </script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.1.6/js/swiper.min.js"></script><script defer data-pjax src="https://cdn.jsdelivr.net/npm/hexo-butterfly-swiper/lib/swiper_init.js"></script><!-- hexo injector body_end end --></body></html>
