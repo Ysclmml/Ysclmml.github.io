@@ -5,19 +5,6 @@
     
     <entry>
       <title></title>
-      <link href="/2021/06/21/go/1-env/"/>
-      <url>/2021/06/21/go/1-env/</url>
-      
-        <content type="html"><![CDATA[<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title></title>
       <link href="/2021/06/21/go/readme/"/>
       <url>/2021/06/21/go/readme/</url>
       
@@ -52,6 +39,8 @@
       
       <categories>
           
+          <category> 后端 </category>
+          
           <category> go </category>
           
       </categories>
@@ -76,6 +65,8 @@
       
       
       <categories>
+          
+          <category> 后端 </category>
           
           <category> go </category>
           
@@ -104,6 +95,8 @@
       
       <categories>
           
+          <category> 系统 </category>
+          
           <category> linux </category>
           
       </categories>
@@ -130,6 +123,8 @@
       
       
       <categories>
+          
+          <category> 系统 </category>
           
           <category> linux </category>
           
@@ -158,6 +153,8 @@
       
       <categories>
           
+          <category> 数据库 </category>
+          
           <category> mongo </category>
           
       </categories>
@@ -167,34 +164,9 @@
             
             <tag> 集群 </tag>
             
+            <tag> docker </tag>
+            
             <tag> mongo </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>启动httpserver</title>
-      <link href="/2021/03/25/yuan-ma-yue-du/4-qi-dong-httpserver/"/>
-      <url>/2021/03/25/yuan-ma-yue-du/4-qi-dong-httpserver/</url>
-      
-        <content type="html"><![CDATA[<p>看看启动server的代码</p><pre class="line-numbers language-python" data-language="python"><code class="language-python">app <span class="token operator">=</span> tornado<span class="token punctuation">.</span>web<span class="token punctuation">.</span>Application<span class="token punctuation">(</span><span class="token punctuation">[</span>        <span class="token punctuation">(</span><span class="token string">r'/'</span><span class="token punctuation">,</span> MainHandler<span class="token punctuation">)</span><span class="token punctuation">,</span>    <span class="token punctuation">]</span><span class="token punctuation">)</span>app<span class="token punctuation">.</span>listen<span class="token punctuation">(</span><span class="token number">8888</span><span class="token punctuation">)</span>tornado<span class="token punctuation">.</span>ioloop<span class="token punctuation">.</span>IOLoop<span class="token punctuation">.</span>current<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>第一行代码只是简单的初始化了应用<code>app</code>， 而没有实际启动<code>httpserver </code>， 下面分析如何启动<code>httpsever</code>的。 </p><p>进入源码分析</p><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">listen</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> port<span class="token punctuation">:</span> <span class="token builtin">int</span><span class="token punctuation">,</span> address<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">:</span> Any<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> HTTPServer<span class="token punctuation">:</span>    <span class="token triple-quoted-string string">"""Starts an HTTP server for this application on the given port.    This is a convenience alias for creating an `.HTTPServer`    object and calling its listen method.  Keyword arguments not    supported by `HTTPServer.listen &lt;.TCPServer.listen&gt;` are passed to the    `.HTTPServer` constructor.  For advanced uses    (e.g. multi-process mode), do not use this method; create an    `.HTTPServer` and call its    `.TCPServer.bind`/`.TCPServer.start` methods directly.    Note that after calling this method you still need to call    ``IOLoop.current().start()`` to start the server.    Returns the `.HTTPServer` object.    .. versionchanged:: 4.3       Now returns the `.HTTPServer` object.    """</span>    server <span class="token operator">=</span> HTTPServer<span class="token punctuation">(</span>self<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span>  <span class="token comment"># 把当前app和HttpServer进行绑定</span>    server<span class="token punctuation">.</span>listen<span class="token punctuation">(</span>port<span class="token punctuation">,</span> address<span class="token punctuation">)</span>    <span class="token keyword">return</span> server<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>上面零零洒洒的注释大致也说明了这个<code>app.listen</code>是一个启动<code>HttpServer</code>的快捷方式。 但是提到了一句，如果需要使用多进程模式， 就不能使用当前这种方法了。 </p><p>当然， 使用了<code>app.listen</code>方法后还需要启动IO循环才算真正的启动了<code>http</code>服务器。</p><p>上面的<code>HTTPServer</code>内部这里先不进去深入探究， 后续再深入探究</p><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">]]></content>
-      
-      
-      <categories>
-          
-          <category> tornado </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 异步 </tag>
-            
-            <tag> python </tag>
             
         </tags>
       
@@ -212,7 +184,9 @@
       
       <categories>
           
-          <category> tornado </category>
+          <category> 后端 </category>
+          
+          <category> python </category>
           
       </categories>
       
@@ -221,7 +195,7 @@
             
             <tag> 异步 </tag>
             
-            <tag> python </tag>
+            <tag> tornado </tag>
             
         </tags>
       
@@ -239,7 +213,9 @@
       
       <categories>
           
-          <category> tornado </category>
+          <category> 后端 </category>
+          
+          <category> python </category>
           
       </categories>
       
@@ -248,7 +224,36 @@
             
             <tag> 异步 </tag>
             
-            <tag> python </tag>
+            <tag> tornado </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>启动httpserver</title>
+      <link href="/2021/03/25/yuan-ma-yue-du/4-qi-dong-httpserver/"/>
+      <url>/2021/03/25/yuan-ma-yue-du/4-qi-dong-httpserver/</url>
+      
+        <content type="html"><![CDATA[<p>看看启动server的代码</p><pre class="line-numbers language-python" data-language="python"><code class="language-python">app <span class="token operator">=</span> tornado<span class="token punctuation">.</span>web<span class="token punctuation">.</span>Application<span class="token punctuation">(</span><span class="token punctuation">[</span>        <span class="token punctuation">(</span><span class="token string">r'/'</span><span class="token punctuation">,</span> MainHandler<span class="token punctuation">)</span><span class="token punctuation">,</span>    <span class="token punctuation">]</span><span class="token punctuation">)</span>app<span class="token punctuation">.</span>listen<span class="token punctuation">(</span><span class="token number">8888</span><span class="token punctuation">)</span>tornado<span class="token punctuation">.</span>ioloop<span class="token punctuation">.</span>IOLoop<span class="token punctuation">.</span>current<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>第一行代码只是简单的初始化了应用<code>app</code>， 而没有实际启动<code>httpserver </code>， 下面分析如何启动<code>httpsever</code>的。 </p><p>进入源码分析</p><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">listen</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> port<span class="token punctuation">:</span> <span class="token builtin">int</span><span class="token punctuation">,</span> address<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">:</span> Any<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> HTTPServer<span class="token punctuation">:</span>    <span class="token triple-quoted-string string">"""Starts an HTTP server for this application on the given port.    This is a convenience alias for creating an `.HTTPServer`    object and calling its listen method.  Keyword arguments not    supported by `HTTPServer.listen &lt;.TCPServer.listen&gt;` are passed to the    `.HTTPServer` constructor.  For advanced uses    (e.g. multi-process mode), do not use this method; create an    `.HTTPServer` and call its    `.TCPServer.bind`/`.TCPServer.start` methods directly.    Note that after calling this method you still need to call    ``IOLoop.current().start()`` to start the server.    Returns the `.HTTPServer` object.    .. versionchanged:: 4.3       Now returns the `.HTTPServer` object.    """</span>    server <span class="token operator">=</span> HTTPServer<span class="token punctuation">(</span>self<span class="token punctuation">,</span> <span class="token operator">**</span>kwargs<span class="token punctuation">)</span>  <span class="token comment"># 把当前app和HttpServer进行绑定</span>    server<span class="token punctuation">.</span>listen<span class="token punctuation">(</span>port<span class="token punctuation">,</span> address<span class="token punctuation">)</span>    <span class="token keyword">return</span> server<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><p>上面零零洒洒的注释大致也说明了这个<code>app.listen</code>是一个启动<code>HttpServer</code>的快捷方式。 但是提到了一句，如果需要使用多进程模式， 就不能使用当前这种方法了。 </p><p>当然， 使用了<code>app.listen</code>方法后还需要启动IO循环才算真正的启动了<code>http</code>服务器。</p><p>上面的<code>HTTPServer</code>内部这里先不进去深入探究， 后续再深入探究</p><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">]]></content>
+      
+      
+      <categories>
+          
+          <category> 后端 </category>
+          
+          <category> python </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 异步 </tag>
+            
+            <tag> tornado </tag>
             
         </tags>
       
@@ -266,7 +271,9 @@
       
       <categories>
           
-          <category> tornado </category>
+          <category> 后端 </category>
+          
+          <category> python </category>
           
       </categories>
       
@@ -275,7 +282,7 @@
             
             <tag> 异步 </tag>
             
-            <tag> python </tag>
+            <tag> tornado </tag>
             
         </tags>
       
