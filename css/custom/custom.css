@@ -1,0 +1,156 @@
+/* ============自定义字体配置========= */
+@font-face{
+  font-family:'FZFWZhuZiAYuanJWD' ;  /* 字体名自定义即可 */
+  src:url('/fonts/FZFWZhuZiAYuanJWD.TTF'); /* 字体文件路径 */
+  font-display : swap;
+}
+
+/* article-container */
+body {
+  font-family: 'FZFWZhuZiAYuanJWD', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Lato, Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 16px
+}
+
+/*#page-header.nav-fixed #nav #site-name, #page-header.nav-fixed #nav #toggle-menu, #page-header.nav-fixed #nav a {*/
+/*  color: var(--font-color);*/
+/*  text-shadow: none;*/
+/*}*/
+
+/*#page-header #nav #site-name, #page-header #nav #toggle-menu, #page-header #nav a {*/
+/*  color: var(--font-color);*/
+/*  text-shadow: none;*/
+/*}*/
+
+/* =========透明度修改====== */
+
+/*div#post {*/
+/*  background: rgba(255,255,255,.9);*/
+/*}*/
+
+/*.card-widget {*/
+/*  background: rgba(255,255,255,.9)!important;*/
+/*}*/
+
+/*!* 页脚透明 *!*/
+/*#footer{*/
+/*  background: transparent!important;*/
+/*}*/
+
+/*#footer {*/
+/*  !*background: rgba(255,255,255,.15);*!*/
+/*  color: #000;*/
+/*  border-top-right-radius: 20px;*/
+/*  border-top-left-radius: 20px;*/
+/*  backdrop-filter: saturate(100%) blur(5px)*/
+/*}*/
+
+/*#footer::before {*/
+/*  background: rgba(255,255,255,.15)*/
+/*}*/
+
+/*#footer #footer-wrap {*/
+/*  color: var(--font-color)*/
+/*}*/
+
+/*#footer #footer-wrap a {*/
+/*  color: var(--font-color)*/
+/*}*/
+
+/* 头图透明 */
+/*#page-header{*/
+/*  background: transparent!important;*/
+/*}*/
+/*!*top-img黑色透明玻璃效果移除，不建议加，除非你执着于完全一图流或者背景图对比色明显 *!*/
+/*#page-header.post-bg:before {*/
+/*  background-color: transparent!important;*/
+}
+/*夜间模式伪类遮罩层透明*/
+/*[data-theme="dark"]*/
+/*#footer::before{*/
+/*  background: transparent!important;*/
+/*}*/
+/*[data-theme="dark"]*/
+/*#page-header::before{*/
+/*  background: transparent!important;*/
+/*}*/
+
+
+/* ========== 侧栏按钮缩进 =========*/
+/*需要固定隐藏的元素选择器进行具体修改*/
+/*#fixedElement{*/
+/*  position: fixed;*/
+/*  width: 60px*/
+/*  !* 假定宽度是60px *!*/
+/*  bottom: 60px;*/
+/*  !* 定义元素下边框与浏览器下边框的距离 *!*/
+/*  left: -30px;*/
+/*  !* 定义元素左边框与浏览器左边框的距离 *!*/
+/*  !* 此时效果上此按钮应当缩进侧栏一半 *!*/
+/*}*/
+/*#fixedElement:hover{*/
+/*  left: 0px;*/
+/*}*/
+
+/* ================== 夜间模式或阅读模式修改 ================== */
+/*[data-theme="dark"]*/
+/*#aside-content .card-widget{*/
+/*  background: rgba(0, 0, 0, 0.5)!important;*/
+/*}*/
+/*[data-theme="dark"]*/
+/*div#post{*/
+/*  background: rgba(0, 0, 0, 0.5)!important;*/
+/*}*/
+
+/*.read-mode #aside-content .card-widget{*/
+/*  background: rgba(158, 204, 171, 0.5)!important;*/
+/*}*/
+/*.read-mode div#post{*/
+/*  background: rgba(158, 204, 171, 0.5)!important;*/
+/*}*/
+
+/*[data-theme="dark"]*/
+/*.read-mode #aside-content .card-widget{*/
+/*  background: rgba(0, 0, 0, 0.5)!important;*/
+/*  color: #ffffff;*/
+/*}*/
+/*[data-theme="dark"]*/
+/*.read-mode div#post{*/
+/*  background: rgba(0, 0, 0, 0.5)!important;*/
+/*  color: #ffffff;*/
+/*}*/
+/* ============ 图片模糊渐变清晰 ============== */
+
+/*10s为加载动画的时间，1为加载动画的次数，ease-in-out为动画效果*/
+/*#page-header,*/
+/*#web_bg {*/
+/*  -webkit-animation: imgblur 1.5s 1 ease-in-out;*/
+/*  animation: imgblur 1.5s 1 ease-in-out;*/
+/*}*/
+/*@keyframes imgblur {*/
+/*  0% {*/
+/*    filter: blur(5px);*/
+/*  }*/
+/*  100% {*/
+/*    filter: blur(0px);*/
+/*  }*/
+/*}*/
+/*!*适配使用-webkit内核的浏览器 *!*/
+/*@-webkit-keyframes imgblur {*/
+/*  0% {*/
+/*    -webkit-filter: blur(5px);*/
+/*  }*/
+/*  100% {*/
+/*    -webkit-filter: blur(0px);*/
+/*  }*/
+/*}*/
+
+/* 分类磁贴修改*/
+/*a.categoryBar-list-link::before {*/
+/*  !*content: '|\f0f4' !important;*!*/
+/*  content: '|🍺' !important;*/
+/*  color: #fff !important;*/
+/*  font-size: 20px !important;*/
+/*  margin-right: 20px;*/
+/*  font-weight: 600;*/
+/*  !*font-family: 'Font Awesome 5 Free', FZFWZhuZiAYuanJWD;*!*/
+/*}*/
